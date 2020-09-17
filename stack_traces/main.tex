@@ -1,0 +1,273 @@
+\documentclass[8pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted}
+
+\title{Python Stack Trace Interpretation}
+\author{Paweł Rubin}
+\date{September 2020}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+
+The appended text file contains nine Python stack traces. The task is to examine the stack traces and provide a brief response for each one that summarizes what the problem or likely problem is, and the first line of code you should jump to in your code editor given the trace.
+
+\section*{Overall analysis}
+
+It is easy to see that each presented problem has similar structure:
+
+\begin{minted}{python}
+run_trace(i, lambda: f(op, arg1, arg2))
+\end{minted}
+where \mintinline{python}{i} stands for the number of the task.
+
+\smallskip
+
+Then, it should be noted that \mintinline{python}{f} function in \mintinline{python}{lambda} stands for either of these three:
+\mintinline{python}{perform_calculation()}, \mintinline{python}{comp_calc()}, \mintinline{python}{calc_dict()}.
+Each of them performs an operation \mintinline{python}{calc()} on provided arguments.
+
+\smallskip
+
+With this in mind, let's dig into the first problem.
+
+
+\section*{Traceback Problem 1}
+
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 45, in <lambda>
+    run_trace(1, lambda: perform_calculation(add, '1', 3))
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 12, in add
+    return x + y
+TypeError: can only concatenate str (not "int") to str
+\end{minted}
+
+As the \mintinline{python}{TypeError} message says: \mintinline{python}{int} cannot be concatenated to \mintinline{python}{str}. We can see that this operation was perfomed on the line 12 in the \mintinline{python}{x + y} expression in the \mintinline{python}{add()} function, which was called via \mintinline{python}{calc()} in \mintinline{python}{perform_calculation()}.
+The latter has been executed with \mintinline{python}{'1'} - a string, and \mintinline{python}{3} - an integer.
+
+The problem here is the incompatibility of arguments. Depending on the desired result - we should change one of them accordingly. So the first line of code we should jumo to in owr editor is the line 45.
+
+\section*{Traceback Problem 2}
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 46, in <lambda>
+    run_trace(2, lambda: perform_calculation(add, 7, '3'))
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 12, in add
+    return x + y
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+\end{minted}
+
+Again we deal with the same situation as in the first example, but now the left operand is an integer, and the right one is a string.  You cannot add a string to an integer - clear message in the \mintinline{python}{TypeError}. Once more, the incompatibility is the issue here, and the line of code we should jump to is the next line - line 46. (We can see a pattern here...)
+
+\section*{Traceback Problem 3}
+\begin{minted}{text}
+
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 47, in <lambda>
+    run_trace(3, lambda: perform_calculation(mult, '3', '3'))
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 15, in mult
+    return x * y
+TypeError: can't multiply sequence by non-int of type 'str'
+\end{minted}
+
+Once more a similar situation, but this time not so obvious. In Python we can multiple a sequence by an integer - that's what Python tried to do. A \mintinline{python}{str} is also a sequence:
+\begin{minted}{python}
+from typing import Sequence
+assert isinstance("G.R. Emlin", Sequence)
+\end{minted}
+The second operand was also a string - hence the \mintinline{python}{TypeError}. Once more the incompatibility of operands caused an \mintinline{python}{Exception}. We should jump to - no suprise here - the 47th line.
+
+\section*{Traceback Problem 4}
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 48, in <lambda>
+    run_trace(4, lambda: perform_calculation(mult, [4], [3]))
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 15, in mult
+    return x * y
+TypeError: can't multiply sequence by non-int of type 'list'
+\end{minted}
+
+Same as before, but the right operand is not a string but a list.
+We should jump to the 48th line.
+
+\section*{Traceback Problem 5}
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 49, in <lambda>
+    run_trace(5, lambda: perform_calculation(innoc, '1', 3))
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 22, in innoc
+    spelunk()
+  File "stack_traces.py", line 21, in spelunk
+    raise ValueError('Invalid')
+ValueError: Invalid
+\end{minted}
+
+It's a tricky one. This time, we have a \mintinline{python}{ValueError} raised directly in the code by the \mintinline{python}{spelunk()} function which is called in the \mintinline{python}{innoc()} function. We should examine the code of the latter.
+
+Given the line numbering, we can recreate the code:
+
+\begin{minted}{python}
+19: def innoc(*_):
+20:     def spelunk():
+21:         raise ValueError('Invalid')
+22:     spelunk()
+\end{minted}
+
+Regardless of our recreation attempt, we should examine the 21st line and find the reason for an error.
+
+\section*{Traceback Problem 6}
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 50, in <lambda>
+    run_trace(6, lambda: comp_calc([1, 2, 3], 1, add))
+  File "stack_traces.py", line 30, in comp_calc
+    return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+TypeError: zip argument #2 must support iteration
+\end{minted}
+
+At first sight, the complicated list comprehension on line 30 could disturb us, but it seems to be ok. The \mintinline{python}{TypeError} message is quite self-descriptive though*. The second argument, most likely on line 50 - an integer, indeed does not support iteration. We should examine this line.
+
+*In Python 3.8, the error message would be: \mintinline{text}{'int' object is not iterable}.
+
+\section*{Traceback Problem 7}
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 51, in <lambda>
+    run_trace(7, lambda: comp_calc([1, 2, [3]], [4, 5, 6], add))
+  File "stack_traces.py", line 30, in comp_calc
+    return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+  File "stack_traces.py", line 30, in <listcomp>
+    return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 12, in add
+    return x + y
+TypeError: can only concatenate list (not "int") to list
+\end{minted}
+
+This time the \mintinline{python}{zip()} call is fine. However, members of iterables passed to zip are most likely the problem. Once more, the \mintinline{python}{TypeError} message is clear: an integer cannot be concatenated to list. The reason is probably the pair: \mintinline{python}{([3], 6)}. We should examine the line 51.
+
+\section*{Traceback Problem 8}
+
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 52, in <lambda>
+    run_trace(8, lambda: calc_dict({'one': 1, 'two': '2'}, 'one', 'two', add))
+  File "stack_traces.py", line 26, in calc_dict
+    return perform_calculation(calc, d[k1], d[k2])
+  File "stack_traces.py", line 8, in perform_calculation
+    calc(x, y)
+  File "stack_traces.py", line 12, in add
+    return x + y
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+\end{minted}
+
+This is similar to the second example. However, now we have a mysterious \mintinline{python}{calc_dict()} function. Given its name and arguments, we can assume that \mintinline{python}{1} and \mintinline{python}{'2'} are arguments passed down to the \mintinline{python}{add()} function. Once again, we should examine them by jumping to the 52nd line.
+
+\section*{Traceback Problem 9}
+\begin{minted}{text}
+Traceback (most recent call last):
+  File "stack_traces.py", line 36, in run_trace
+    f()
+  File "stack_traces.py", line 53, in <lambda>
+    run_trace(9, lambda: calc_dict({}, 'one', 'two', add))
+  File "stack_traces.py", line 26, in calc_dict
+    return perform_calculation(calc, d[k1], d[k2])
+KeyError: 'one'
+\end{minted}
+
+Once more, given the function (\mintinline{python}{calc_dict()}) name, and arguments passed to it, we can safely assume that the reason for an error is that, indeed, an empty dictionary has no \mintinline{python}{'one'} key. We should jump to the 53rd line.
+
+\section*{Reverse engineering}
+After the above analysis, given the similar structure of each problem, and growing line numbers, we can easily recreate the code that generated those tracebacks. 
+
+The result can be seen in the appendix as well as on the next page. The latter has few whitespaces less to fit on one page
+
+
+
+
+\clearpage
+
+\begin{minted}{python}
+import sys
+import traceback
+
+
+def perform_calculation(calc, x, y):
+    calc(x, y)
+
+
+def add(x, y):
+    return x + y
+
+
+def mult(x, y):
+    return x * y
+
+
+def innoc(*_):
+    def spelunk():
+        raise ValueError('Invalid')
+    spelunk()
+
+
+def calc_dict(d, k1, k2, calc):
+    return perform_calculation(calc, d[k1], d[k2])
+
+
+def comp_calc(x, y, calc):
+    return [perform_calculation(calc, x_i, y_i) for x_i, y_i in zip(x, y)]
+
+
+def run_trace(i: int, f):
+    try:
+        f()
+    except Exception:
+        print(f'Traceback Problem {i}\n===================', file=sys.stderr)
+        traceback.print_exc()
+        print('\n', file=sys.stderr)
+
+run_trace(1, lambda: perform_calculation(add, '1', 3))
+run_trace(2, lambda: perform_calculation(add, 7, '3'))
+run_trace(3, lambda: perform_calculation(mult, '3', '3'))
+run_trace(4, lambda: perform_calculation(mult, [4], [3]))
+run_trace(5, lambda: perform_calculation(innoc, '1', 3))
+run_trace(6, lambda: comp_calc([1, 2, 3], 1, add))
+run_trace(7, lambda: comp_calc([1, 2, [3]], [4, 5, 6], add))
+run_trace(8, lambda: calc_dict({'one': 1, 'two': '2'}, 'one', 'two', add))
+run_trace(9, lambda: calc_dict({}, 'one', 'two', add))
+
+\end{minted}
+
+\end{document}
