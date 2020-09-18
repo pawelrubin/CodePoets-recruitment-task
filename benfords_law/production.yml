@@ -5,20 +5,15 @@ services:
     build:
       context: ./backend/
       dockerfile: Dockerfile
-    command: ["/start-reload.sh"]
-    volumes:
-      - ./backend:/app
+    restart: always
 
   frontend:
-    stdin_open: true
     depends_on:
       - backend
     container_name: frontend
     build:
       context: ./frontend/
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
-      - "80:3000"
-    volumes:
-      - "/app/node_modules"
-      - ./frontend:/app
+      - "80:80"
+    restart: always
