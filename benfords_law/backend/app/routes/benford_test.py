@@ -1,34 +1,40 @@
 from io import BytesIO
-from typing import Counter, Dict, List, Union
+from typing import Any, Counter, Dict, List, Union, cast
 
-from fastapi import APIRouter, File, UploadFile, Form
+from fastapi.routing import APIRouter
+from fastapi.param_functions import File
+from fastapi.datastructures import UploadFile
 from pandas import read_table
-from pydantic import BaseModel
+
+from app.models import DataItem, BenfordStats
+from app.types import Number
 
 router = APIRouter()
 
-Number = Union[float, int]
+
+def type_guard(lst: List[Any]) -> bool:
+    return all(str(e).isnumeric() for e in lst)
 
 
-def significant_digits_stats(numbers: List[Number]) -> Dict[str, float]:
+def significant_digits_stats(numbers: List[Union[Number, str]]) -> Dict[str, float]:
     total = len(numbers)
-    multiset = Counter([p for i in numbers if (p := str(i)[0]) != "0"])
-    print(multiset)
+    multiset = Counter([str(int(i)) for i in numbers])
     return {k: v / total for k, v in sorted(multiset.items())}
 
 
 @router.post("/test_file/")
-async def benford_test_file(column: str = Form(...), file: UploadFile = File(...)):
-    content = await file.read()
-    data = read_table(BytesIO(content), usecols=[column])[column].tolist()
-    stats = significant_digits_stats(data)
-    return {"filename": file.filename, "column": column, "stats": stats}
+async def benford_test_file(file: UploadFile = File(...)) -> BenfordStats:
+    content = cast(bytes, await file.read())
+    df = read_table(BytesIO(content))
+    return BenfordStats(
+        stats={
+            column: significant_digits_stats(lst)
+            for column in df.columns
+            if type_guard(lst := df[column].to_list())
+        }
+    )
 
 
-class DataItem(BaseModel):
-    numbers: List[Number]
-
-
-@router.post("/test_data/")
-async def benford_test_data(data: DataItem):
-    return {"stats": significant_digits_stats(data.numbers)}
+@router.post("/test_data/", response_model=BenfordStats)
+async def benford_test_data(data: DataItem) -> BenfordStats:
+    return BenfordStats(stats=significant_digits_stats(data.numbers))

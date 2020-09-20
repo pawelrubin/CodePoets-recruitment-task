@@ -3,6 +3,9 @@ name = "benfords_law"
 version = "0.1.0"
 description = ""
 authors = ["pawelrubin <pawelrubin19@gmail.com>"]
+packages = [
+  { include = "app" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"

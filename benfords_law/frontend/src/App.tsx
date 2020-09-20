@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
+import { BenfordForm } from "./components/BenfordForm/BenfordForm";
 import { BenfordGraph } from "./components/BenfordGraph/BenfordGraph";
+import { DigitsStats } from "./types";
 
 const mockData = {
   "1": 0.293966887077759,
@@ -15,7 +17,14 @@ const mockData = {
 };
 
 function App() {
-  return <BenfordGraph stats={mockData}></BenfordGraph>;
+  const [stats, setStats] = useState<DigitsStats>();
+
+  return (
+    <>
+      <BenfordForm setStats={setStats}></BenfordForm>
+      {stats && <BenfordGraph stats={stats}></BenfordGraph>}
+    </>
+  );
 }
 
 export default App;

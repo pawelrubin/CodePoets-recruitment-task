@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
-from .routes.benford_test import router as benford_router
+from .routes import BenfordRouter
 
 app = FastAPI(openapi_url="/api/openapi.json", docs_url="/api/docs", redoc_url=None)
 
-app.include_router(benford_router, prefix="/api/benford")
+app.include_router(BenfordRouter, prefix="/api/benford")
 
 
 @app.get("/api/")
