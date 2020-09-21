@@ -1,29 +1,36 @@
-import React, { useState } from "react";
-import "./App.css";
-import { BenfordForm } from "./components/BenfordForm/BenfordForm";
-import { BenfordGraph } from "./components/BenfordGraph/BenfordGraph";
-import { DigitsStats } from "./types";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
 
-const mockData = {
-  "1": 0.293966887077759,
-  "2": 0.1816597467835358,
-  "3": 0.11999589932851504,
-  "4": 0.09467425290891383,
-  "5": 0.07991183556307345,
-  "6": 0.0702239991798657,
-  "7": 0.059767286893228765,
-  "8": 0.053411246091547494,
-  "9": 0.04628632938643703,
-};
+import { About } from "components/About";
+import { Main } from "components/Main";
+import { Navbar } from "components/Navbar";
+import { Projects } from "components/Projects";
+
+import { GlobalStyles } from "./global";
+import { theme } from "./theme";
 
 function App() {
-  const [stats, setStats] = useState<DigitsStats>();
-
   return (
-    <>
-      <BenfordForm setStats={setStats}></BenfordForm>
-      {stats && <BenfordGraph stats={stats}></BenfordGraph>}
-    </>
+    <ThemeProvider theme={theme}>
+      <>
+        <GlobalStyles />
+        <Router>
+          <Navbar />
+          <Switch>
+            <Route path="/projects">
+              <Projects />
+            </Route>
+            <Route path="/about">
+              <About />
+            </Route>
+            <Route path="/">
+              <Main />
+            </Route>
+          </Switch>
+        </Router>
+      </>
+    </ThemeProvider>
   );
 }
 
