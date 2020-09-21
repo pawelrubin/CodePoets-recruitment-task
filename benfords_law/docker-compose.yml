@@ -11,13 +11,10 @@ services:
 
   frontend:
     stdin_open: true
-    container_name: frontend
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile.dev
+    working_dir: /app
+    image: node:alpine
     command: ["yarn", "run", "start"]
     volumes:
-      - "/app/node_modules"
       - ./frontend:/app
 
   nginx:
