@@ -1,16 +1,19 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, css } from "styled-components";
 import { ThemeType } from "theme";
 
 export const GlobalStyles = createGlobalStyle<{ theme: ThemeType }>`
   html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100%;
   }
 
   body {
     align-items: center;
-    background: ${({ theme }) => theme.primaryDark};
-    color:  ${({ theme }) => theme.primaryLight};
+    background: ${({ theme }) =>
+      css`linear-gradient(127deg, ${theme.color.primaryDark} 0%, ${theme.color.secondaryDark} 85%)`};
+    color:  ${({ theme }) => theme.color.primaryLight};
     display: flex;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     height: 100vh;
@@ -27,9 +30,8 @@ export const GlobalStyles = createGlobalStyle<{ theme: ThemeType }>`
     text-align: center;
   }
 
-  // links
   a {
-    color: ${({ theme }) => theme.primaryHover};
+    color: ${({ theme }) => theme.color.secondaryDark};
     text-decoration: none;
   }
   `;

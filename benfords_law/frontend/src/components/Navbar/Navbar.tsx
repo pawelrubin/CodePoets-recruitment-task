@@ -8,7 +8,7 @@ export function Navbar() {
     <StyledMenu>
       <ul>
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/">Upload</Link>
         </li>
         <li>
           <Link to="/projects">Projects</Link>

@@ -5,27 +5,28 @@ export const StyledMenu = styled.nav`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: ${({ theme }) => theme.primaryLight};
+  background: ${({ theme }) => theme.color.primaryLight};
   height: 100vh;
   text-align: left;
-  padding: 2rem;
+  padding: 0 2rem;
   position: absolute;
   top: 0;
   left: 0;
-  transition: transform 0.3s ease-in-out;
 
   @media (max-width: ${({ theme }) => theme.mobile}) {
     width: 100%;
+  }
+  ul {
+    padding: 0;
   }
 
   a {
     font-size: 2rem;
     text-transform: uppercase;
     font-weight: bold;
-    letter-spacing: 0.5rem;
-    color: ${({ theme }) => theme.primaryDark};
+    letter-spacing: 0.4rem;
+    color: ${({ theme }) => theme.color.primaryDark};
     text-decoration: none;
-    transition: color 0.3s linear;
 
     @media (max-width: ${({ theme }) => theme.mobile}) {
       font-size: 1.5rem;
@@ -33,7 +34,7 @@ export const StyledMenu = styled.nav`
     }
 
     &:hover {
-      color: ${({ theme }) => theme.primaryHover};
+      color: ${({ theme }) => theme.color.secondaryDark};
     }
   }
 `;
