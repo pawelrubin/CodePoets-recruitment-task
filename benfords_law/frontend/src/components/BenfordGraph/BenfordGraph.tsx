@@ -39,7 +39,7 @@ export function BenfordGraph({ stats }: BenfordGraphProps) {
       <ComposedChart
         width={700}
         height={300}
-        data={column ? parseData(stats[column]) : []}
+        data={column && stats[column] ? parseData(stats[column]) : []}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <YAxis />
