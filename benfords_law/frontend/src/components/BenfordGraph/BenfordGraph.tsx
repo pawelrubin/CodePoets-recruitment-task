@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 
 import {
   CartesianGrid,
@@ -11,28 +11,20 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { StylesConfig } from "react-select";
-import {
-  BENFORDS_VALUES,
-  BenfordColumnStats,
-  BenfordStats,
-  Digit,
-} from "types";
-import { BenfordGraphData, BenfordGraphProps, IOption } from "./types";
+import { SignificantDigitsStats, BenfordStats, Digit } from "types";
+import { BenfordGraphData, IOption } from "./types";
 import { Container, StyledComposedChart, StyledSelect } from "./elements";
+import { CloseButton} from 'components/CloseButton'
 import { theme } from "theme";
-
-const parseData = (stats: BenfordColumnStats): BenfordGraphData =>
-  Object.entries(stats).map(([digit, distribution]) => ({
-    digit,
-    distribution,
-    benford: BENFORDS_VALUES[digit as Digit],
-  }));
 
 const getOptions = (stats: BenfordStats): IOption[] =>
   Object.keys(stats).map((column) => ({ value: column, label: column }));
 
 const customStyles: StylesConfig = {
-  control: styles => ({ ...styles, backgroundColor: theme.color.primaryLight }),
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: theme.color.primaryLight,
+  }),
   option: (styles, { isSelected }) => ({
     ...styles,
     backgroundColor: isSelected
@@ -42,12 +34,26 @@ const customStyles: StylesConfig = {
   }),
 };
 
-export function BenfordGraph({ stats }: BenfordGraphProps) {
+type BenfordGraphProps = PropsWithChildren<{
+  stats: BenfordStats;
+  benford: SignificantDigitsStats;
+  reset: () => void;
+}>;
+
+export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
   const options = getOptions(stats);
   const [column, setColumn] = useState<string>(options[0]?.value);
 
+  const parseData = (stats: SignificantDigitsStats): BenfordGraphData =>
+    Object.entries(stats).map(([digit, distribution]) => ({
+      digit: (digit as Digit),
+      distribution,
+      benford: benford[(digit as Digit)],
+    }));
+
   return (
     <Container>
+      <CloseButton onClick={reset}/>
       <StyledSelect
         defaultValue={options[0]}
         options={options}

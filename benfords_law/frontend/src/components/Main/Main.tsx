@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { BenfordStats } from "types";
+import React, { useEffect, useState } from "react";
+import { BenfordStats, SignificantDigitsStats } from "types";
 import { BenfordForm } from "components/BenfordForm";
 import { BenfordGraph } from "components/BenfordGraph";
+
+import { BackButton } from "./elements";
 
 const mock = {
   "7_2009": {
@@ -18,14 +20,24 @@ const mock = {
 };
 
 export function Main() {
-  const [stats, setStats] = useState<BenfordStats>();
+  const [stats, setStats] = useState<BenfordStats | null>();
+  const [benford, setBenford] = useState<SignificantDigitsStats>();
+
+  useEffect(() => {
+    fetch("/api/benford/assert_stats/")
+      .then((res) => res.json())
+      .then((data: SignificantDigitsStats) => {
+        setBenford(data);
+      });
+  }, []);
+
 
   return (
     <>
-      {!stats ? (
+      {!stats || !benford ? (
         <BenfordForm setStats={setStats}></BenfordForm>
       ) : (
-        <BenfordGraph stats={stats}></BenfordGraph>
+        <BenfordGraph benford={benford} stats={stats} reset={() => setStats(null)}></BenfordGraph>
       )}
     </>
   );

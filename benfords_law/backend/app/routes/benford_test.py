@@ -4,9 +4,10 @@ from typing import Any, Counter, Dict, List, Optional, Union, cast
 from fastapi.routing import APIRouter
 from fastapi.param_functions import File
 from fastapi.datastructures import UploadFile
+from fastapi.exceptions import HTTPException
 from pandas import read_table
 
-from app.models import DataItem, BenfordStats
+from app.models import BenfordStats
 from app.types import DIGITS
 from app.helpers import merge_dicts
 
@@ -38,7 +39,10 @@ def significant_digits_stats(digits: List[str]) -> Dict[str, float]:
 @router.post("/test_file/")
 async def benford_test_file(file: UploadFile = File(...)) -> BenfordStats:
     content = cast(bytes, await file.read())
-    df = read_table(BytesIO(content))
+    try:
+        df = read_table(BytesIO(content))
+    except Exception as err:
+        raise HTTPException(status_code=400, detail=str(err)) from err
     return BenfordStats(
         stats={
             column: significant_digits_stats(lst)
@@ -48,6 +52,9 @@ async def benford_test_file(file: UploadFile = File(...)) -> BenfordStats:
     )
 
 
-@router.post("/test_data/", response_model=BenfordStats)
-async def benford_test_data(data: DataItem) -> BenfordStats:
-    return BenfordStats(stats=significant_digits_stats(data.numbers))
+@router.get("/assert_stats/")
+async def benford_test_data() -> Dict[str, float]:
+    df = read_table("/app/data/census_2009b")
+    # cast is okay since we know the structure of data
+    parsed = cast(List[str], type_guard_and_parse(df["7_2009"].to_list()))
+    return significant_digits_stats(parsed)

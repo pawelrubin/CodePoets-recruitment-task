@@ -1,11 +1,7 @@
-import { BenfordStats } from "../../types";
-
-export type BenfordGraphProps = {
-  stats: BenfordStats;
-};
+import { Digit } from "types";
 
 export type BenfordGraphData = {
-  digit: string;
+  digit: Digit;
   distribution: Number;
   benford: Number;
 }[];
