@@ -8,26 +8,39 @@ export const StyledMenu = styled.nav`
   background: ${({ theme }) => theme.color.primaryLight};
   height: 100vh;
   text-align: left;
-  padding: 0 2rem;
 
   @media (max-width: ${({ theme }) => theme.mobile}) {
     width: 100%;
+    height: initial;
+    position: sticky;
   }
   ul {
-    padding: 0;
+    padding: 2rem;
+    @media (max-width: ${({ theme }) => theme.mobile}) {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      &>li {
+        display: inline-block;
+      }
+      text-align: center;
+    }
   }
 
-  a {
+  li a {
     font-size: 2rem;
     text-transform: uppercase;
     font-weight: bold;
-    letter-spacing: 0.4rem;
+    letter-spacing: 0.2rem;
     color: ${({ theme }) => theme.color.primaryDark};
     text-decoration: none;
 
     @media (max-width: ${({ theme }) => theme.mobile}) {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       text-align: center;
+      display: block;
+      margin: 0 20px;
     }
 
     &:hover {
