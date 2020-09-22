@@ -17,17 +17,19 @@ function App() {
         <GlobalStyles />
         <Router>
           <Navbar />
-          <Switch>
-            <Route path="/projects">
-              <Projects />
-            </Route>
-            <Route path="/about">
-              <About />
-            </Route>
-            <Route path="/">
-              <Main />
-            </Route>
-          </Switch>
+          <main>
+            <Switch>
+              <Route path="/projects">
+                <Projects />
+              </Route>
+              <Route path="/about">
+                <About />
+              </Route>
+              <Route path="/">
+                <Main />
+              </Route>
+            </Switch>
+          </main>
         </Router>
       </>
     </ThemeProvider>

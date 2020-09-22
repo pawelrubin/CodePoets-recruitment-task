@@ -9,9 +9,6 @@ export const StyledMenu = styled.nav`
   height: 100vh;
   text-align: left;
   padding: 0 2rem;
-  position: absolute;
-  top: 0;
-  left: 0;
 
   @media (max-width: ${({ theme }) => theme.mobile}) {
     width: 100%;
