@@ -1,1 +1,5 @@
 *.egg-info
+
+
+data/*
+!data/census_2009b
