@@ -1,7 +1,6 @@
 from functools import lru_cache
 from io import BytesIO
 from typing import Any, Counter, Dict, List, Optional, cast, get_args
-from app.database.project import Project
 
 from fastapi.routing import APIRouter
 from fastapi.param_functions import File
@@ -10,10 +9,10 @@ from fastapi.exceptions import HTTPException
 from pandas import read_table
 from pydantic import ValidationError
 
+from app.database import db, Project
+from app.helpers import merge_dicts
 from app.models import BenfordStatsResponse
 from app.types import Digit
-from app.helpers import merge_dicts
-from app.database import db
 
 router = APIRouter()
 

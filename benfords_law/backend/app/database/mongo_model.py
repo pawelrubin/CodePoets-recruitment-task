@@ -18,8 +18,8 @@ class OID(str):
     def validate(cls, v: Any) -> ObjectId:
         try:
             return ObjectId(str(v))
-        except InvalidId:
-            raise ValueError(f"Not a valid ObjectId: {v}")
+        except InvalidId as err:
+            raise ValueError(f"Not a valid ObjectId: {v}") from err
 
 
 class MongoModel(BaseModel):
@@ -27,7 +27,7 @@ class MongoModel(BaseModel):
         allow_population_by_field_name = True
         json_encoders = {
             datetime: lambda dt: dt.isoformat(),
-            ObjectId: lambda oid: str(oid),
+            ObjectId: lambda oid: str(oid),  # pylint: disable=unnecessary-lambda
         }
 
     @classmethod
@@ -35,8 +35,7 @@ class MongoModel(BaseModel):
         """We must convert _id into "id". """
         if data is None:
             return data
-        id = data.pop("_id", None)
-        return cls(**dict(data, id=id))
+        return cls(**dict(data, id=data.pop("_id", None)))
 
     def mongo(self, **kwargs: Any) -> Dict[str, Any]:
         exclude_unset = kwargs.pop("exclude_unset", True)

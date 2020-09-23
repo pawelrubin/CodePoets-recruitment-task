@@ -1,3 +1,5 @@
+from typing import Dict
+
 from fastapi import FastAPI
 
 from app.routes import BenfordRouter, ProjectRouter
@@ -9,5 +11,5 @@ app.include_router(ProjectRouter, prefix="/api/project")
 
 
 @app.get("/api/")
-async def root():
+async def root() -> Dict[str, str]:
     return {"message": "Hello World"}

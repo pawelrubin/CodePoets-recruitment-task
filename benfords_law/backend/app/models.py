@@ -11,5 +11,7 @@ class BenfordStatsResponse(BaseModel):
         # pylint: disable=no-self-argument
         # https://github.com/samuelcolvin/pydantic/issues/568
         if len(v) == 0:
-            raise ValidationError("Must have at least one valid column.", cls)  # type: ignore
+            raise ValidationError(
+                "Must have at least one valid column.", cls  # type: ignore
+            )
         return v

@@ -1,0 +1,6 @@
+[MESSAGES CONTROL]
+disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,invalid-name
+
+[FORMAT CHECKER]
+max-line-length=88
+
