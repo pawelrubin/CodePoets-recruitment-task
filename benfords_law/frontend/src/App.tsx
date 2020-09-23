@@ -6,6 +6,7 @@ import { About } from "components/About";
 import { Main } from "components/Main";
 import { Navbar } from "components/Navbar";
 import { Projects } from "components/Projects";
+import { Loading } from "components/Loading";
 
 import { GlobalStyles } from "./global";
 import { theme } from "./theme";
@@ -32,7 +33,7 @@ function App() {
 
           <main>
             {!benford ? (
-              <h1>LOADING</h1>
+              <Loading />
             ) : (
               <BenfordContext.Provider value={benford}>
                 <Switch>

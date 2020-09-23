@@ -1,3 +1,4 @@
+from logging import getLogger
 from functools import lru_cache
 from io import BytesIO
 from typing import Any, Counter, Dict, List, Optional, cast, get_args
@@ -54,7 +55,7 @@ async def benford_test_file(file: UploadFile = File(...)) -> BenfordStatsRespons
         project = Project(stats=stats, filename=file.filename)
         await db.project.insert_one(project.mongo())
     except (Exception, ValidationError) as err:
-        print(err)
+        getLogger("fastapi").error(err)
         raise HTTPException(status_code=400, detail=str(err)) from err
 
     return response
