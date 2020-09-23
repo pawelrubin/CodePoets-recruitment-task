@@ -12,6 +12,7 @@ export const StyledForm = styled.form(
 
     input {
       margin: 0 0 20px;
+      color: ${theme.color.primaryDark};
     }
   `
 );
