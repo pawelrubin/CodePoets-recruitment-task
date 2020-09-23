@@ -3,9 +3,9 @@ import { BenfordStats, SignificantDigitsStats } from "types";
 import { BenfordForm } from "components/BenfordForm";
 import { BenfordGraph } from "components/BenfordGraph";
 
-export function Main({benford}: {benford: SignificantDigitsStats}) {
+export function Main({ benford }: { benford: SignificantDigitsStats }) {
   const [stats, setStats] = useState<BenfordStats>();
-  
+
   return (
     <>
       {!stats || !benford ? (

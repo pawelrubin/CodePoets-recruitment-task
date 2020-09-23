@@ -16,7 +16,7 @@ function App() {
 
   useEffect(() => {
     fetch("/api/benford/assert_stats/")
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((data: SignificantDigitsStats) => {
         setBenford(data);
       });

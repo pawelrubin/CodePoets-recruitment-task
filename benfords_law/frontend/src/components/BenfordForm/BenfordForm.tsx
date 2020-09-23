@@ -3,7 +3,7 @@ import React, {
   Dispatch,
   SetStateAction,
   SyntheticEvent,
-  useState,
+  useState
 } from "react";
 import { BenfordStats } from "../../types";
 
@@ -27,9 +27,9 @@ export function BenfordForm({ setStats }: BenfordFormProps) {
 
     fetch("/api/benford/test_file/", {
       method: "POST",
-      body: formData,
+      body: formData
     })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((data: { stats: BenfordStats }) => {
         setStats(data["stats"]);
       });

@@ -18,7 +18,7 @@ export const Item = styled.div(
     justify-content: space-evenly;
     align-content: center;
     align-self: center;
-    
+
     @media (max-width: ${theme.mobile}) {
       width: 90%;
     }

@@ -4,10 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Project, SignificantDigitsStats } from "types";
 import { Container, Item } from "./elements";
 
-
 function ProjectItem({
   data,
-  benford,
+  benford
 }: {
   data: Project;
   benford: SignificantDigitsStats;
@@ -25,13 +24,13 @@ export function Projects({ benford }: { benford: SignificantDigitsStats }) {
 
   useEffect(() => {
     fetch("/api/project/all/")
-      .then((res) => res.json())
-      .then((data) => setProjects(data));
+      .then(res => res.json())
+      .then(data => setProjects(data));
   }, []);
 
   return (
     <Container>
-      {projects.map((project) => (
+      {projects.map(project => (
         <ProjectItem data={project} benford={benford} />
       ))}
     </Container>
