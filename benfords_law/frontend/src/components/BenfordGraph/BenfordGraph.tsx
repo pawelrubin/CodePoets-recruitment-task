@@ -37,7 +37,7 @@ const customStyles: StylesConfig = {
 type BenfordGraphProps = {
   stats: BenfordStats;
   benford: SignificantDigitsStats;
-  reset: () => void;
+  reset?: () => void;
 };
 
 export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
@@ -53,7 +53,7 @@ export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
 
   return (
     <Container>
-      <CloseButton onClick={reset} />
+      {reset && <CloseButton onClick={reset} />} 
       <StyledSelect
         defaultValue={options[0]}
         options={options}

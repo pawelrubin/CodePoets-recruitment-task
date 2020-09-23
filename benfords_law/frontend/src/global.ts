@@ -30,7 +30,7 @@ export const GlobalStyles = createGlobalStyle<{ theme: ThemeType }>(
 
     main {
       margin: 0 auto;
-      align-items: center;
+      align-items: flex-start;
       display: flex;
       flex-direction: column;
       justify-content: center;

@@ -16,3 +16,10 @@ export type SignificantDigitsStats = {
 
 type Column = string;
 export type BenfordStats = Record<Column, SignificantDigitsStats>;
+
+export type Project = {
+  stats: BenfordStats;
+  filename: string;
+  timestamp: string; // TODO: https://gcanti.github.io/io-ts-types/modules/DateFromISOString.ts.html
+  author?: string;
+};
