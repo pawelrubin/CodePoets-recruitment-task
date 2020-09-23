@@ -28,9 +28,9 @@ const customStyles: StylesConfig = {
   option: (styles, { isSelected }) => ({
     ...styles,
     backgroundColor: isSelected
-      ? theme.color.secondaryDark
+      ? theme.color.secondaryLight
       : theme.color.primaryLight,
-    color: isSelected ? theme.color.primaryLight : theme.color.primaryDark,
+    color: theme.color.primaryDark,
   }),
 };
 

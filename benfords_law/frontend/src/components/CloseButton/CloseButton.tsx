@@ -10,13 +10,18 @@ const Button = styled.button(
     border: none;
     cursor: pointer;
     appearance: none;
+    padding: 0;
+
+    &:hover {
+      color: ${theme.color.secondaryLight}
+    }
   `
 );
 
 export function CloseButton({ onClick }: { onClick: () => void }) {
   return (
-    <Button aria-label="Close" onClick={() => {onClick();console.log('xd')}}>
-      <span aria-hidden="true">x</span>
+    <Button aria-label="Close" onClick={onClick}>
+      <span aria-hidden="true">✕</span>
     </Button>
   );
 }
