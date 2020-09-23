@@ -1,16 +1,19 @@
 from functools import lru_cache
 from io import BytesIO
 from typing import Any, Counter, Dict, List, Optional, cast, get_args
+from app.database.project import Project
 
 from fastapi.routing import APIRouter
 from fastapi.param_functions import File
 from fastapi.datastructures import UploadFile
 from fastapi.exceptions import HTTPException
 from pandas import read_table
+from pydantic import ValidationError
 
 from app.models import BenfordStatsResponse
 from app.types import Digit
 from app.helpers import merge_dicts
+from app.database import db
 
 router = APIRouter()
 
@@ -42,15 +45,20 @@ async def benford_test_file(file: UploadFile = File(...)) -> BenfordStatsRespons
     content = cast(bytes, await file.read())
     try:
         df = read_table(BytesIO(content))
-    except Exception as err:
-        raise HTTPException(status_code=400, detail=str(err)) from err
-    return BenfordStatsResponse(
-        stats={
-            column: significant_digits_stats(lst)
+        stats = {
+            # PyMongo does not allow for `.` in keys.
+            column.replace(".", ","): significant_digits_stats(lst)
             for column in df.columns
             if (lst := type_guard_and_parse(df[column].to_list()))
         }
-    )
+        response = BenfordStatsResponse(stats=stats)
+        project = Project(stats=stats, filename=file.filename)
+        await db.project.insert_one(project.mongo())
+    except (Exception, ValidationError) as err:
+        print(err)
+        raise HTTPException(status_code=400, detail=str(err)) from err
+
+    return response
 
 
 @lru_cache

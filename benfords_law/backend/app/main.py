@@ -9,4 +9,4 @@ app.include_router(BenfordRouter, prefix="/api/benford")
 
 @app.get("/api/")
 async def root():
-    return {"message": "Hello World 2137"}
+    return {"message": "Hello World"}
