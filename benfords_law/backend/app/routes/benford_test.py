@@ -1,6 +1,7 @@
-from logging import getLogger
 from functools import lru_cache
 from io import BytesIO
+from logging import getLogger
+from math import pow
 from typing import Any, Counter, Dict, List, Optional, cast, get_args
 
 from fastapi.routing import APIRouter
@@ -13,11 +14,12 @@ from pydantic import ValidationError
 from app.database import db, Project
 from app.helpers import merge_dicts
 from app.models import BenfordStatsResponse
-from app.types import Digit
+from app.types import Digit, SignificantDigitStats
 
 router = APIRouter()
 
 INVALID_DATA_TRESHOLD = 0.8
+CHI_SQUARED_CRITICAL = 0.1551
 
 
 def significant_digit(num: Any) -> Optional[str]:
@@ -40,18 +42,30 @@ def significant_digits_stats(digits: List[str]) -> Dict[str, float]:
     return merge_dicts(initial, result)
 
 
+def does_obey_benford(stats: SignificantDigitStats) -> bool:
+    return (
+        sum(
+            pow(a - b, 2) / b
+            for a, b in zip(stats.values(), get_benford_assertion().values())
+        )
+        < CHI_SQUARED_CRITICAL
+    )
+
+
 @router.post("/test_file/")
 async def benford_test_file(file: UploadFile = File(...)) -> BenfordStatsResponse:
     content = cast(bytes, await file.read())
     try:
         df = read_table(BytesIO(content))
-        stats = {
-            # PyMongo does not allow for `.` in keys.
-            column.replace(".", ","): significant_digits_stats(lst)
-            for column in df.columns
-            if (lst := type_guard_and_parse(df[column].to_list()))
-        }
-        response = BenfordStatsResponse(stats=stats)
+        stats = {}
+        obey = {}
+        for column in df.columns:
+            if (lst := type_guard_and_parse(df[column].to_list())) :
+                # PyMongo does not allow for `.` in keys.
+                digit_stats = significant_digits_stats(lst)
+                stats[column.replace(".", ",")] = digit_stats
+                obey[column] = does_obey_benford(digit_stats)
+        response = BenfordStatsResponse(stats=stats, obey=obey)
         project = Project(stats=stats, filename=file.filename)
         await db.project.insert_one(project.mongo())
     except (Exception, ValidationError) as err:
