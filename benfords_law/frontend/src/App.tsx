@@ -10,13 +10,14 @@ import { Projects } from "components/Projects";
 import { GlobalStyles } from "./global";
 import { theme } from "./theme";
 import { SignificantDigitsStats } from "types";
+import { BenfordContext } from "hooks";
 
 function App() {
   const [benford, setBenford] = useState<SignificantDigitsStats>();
 
   useEffect(() => {
     fetch("/api/benford/assert_stats/")
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((data: SignificantDigitsStats) => {
         setBenford(data);
       });
@@ -33,17 +34,19 @@ function App() {
             {!benford ? (
               <h1>LOADING</h1>
             ) : (
-              <Switch>
-                <Route path="/projects">
-                  <Projects benford={benford} />
-                </Route>
-                <Route path="/about">
-                  <About />
-                </Route>
-                <Route path="/">
-                  <Main benford={benford} />
-                </Route>
-              </Switch>
+              <BenfordContext.Provider value={benford}>
+                <Switch>
+                  <Route path="/projects">
+                    <Projects />
+                  </Route>
+                  <Route path="/about">
+                    <About />
+                  </Route>
+                  <Route path="/">
+                    <Main />
+                  </Route>
+                </Switch>
+              </BenfordContext.Provider>
             )}
           </main>
         </Router>

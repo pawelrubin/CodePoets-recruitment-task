@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { Project, SignificantDigitsStats } from "types";
 import { Container, Item } from "./elements";
+import { useBenford } from "hooks";
 
 function ProjectItem({
   data,
@@ -19,8 +20,9 @@ function ProjectItem({
   );
 }
 
-export function Projects({ benford }: { benford: SignificantDigitsStats }) {
+export function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const benford = useBenford();
 
   useEffect(() => {
     fetch("/api/project/all/")
