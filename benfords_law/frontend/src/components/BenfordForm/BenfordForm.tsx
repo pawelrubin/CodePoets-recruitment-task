@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { BenfordStats } from "types";
 
-import { Error } from "./elements";
+import { StyledForm, Error } from "./elements";
 
 type BenfordFormProps = {
   setStats: Dispatch<SetStateAction<BenfordStats | undefined>>;
@@ -51,12 +51,12 @@ export function BenfordForm({ setStats }: BenfordFormProps) {
   return loading ? (
     <Loading />
   ) : (
-    <form onSubmit={handleSubmit}>
+    <StyledForm onSubmit={handleSubmit}>
       <input type="file" onChange={handleFileInput} />
       <button type="submit" disabled={!file}>
         Upload
       </button>
       {error && <Error>{error}</Error>}
-    </form>
+    </StyledForm>
   );
 }

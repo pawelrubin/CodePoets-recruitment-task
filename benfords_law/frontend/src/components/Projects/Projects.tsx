@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Project, SignificantDigitsStats } from "types";
 import { Container, Item } from "./elements";
 import { useBenford } from "hooks";
+import { Loading } from "components/Loading";
 
 function ProjectItem({
   data,
-  benford
+  benford,
 }: {
   data: Project;
   benford: SignificantDigitsStats;
@@ -23,18 +24,25 @@ function ProjectItem({
 export function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const benford = useBenford();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    setLoading(true);
     fetch("/api/project/all/")
-      .then(res => res.json())
-      .then(data => setProjects(data));
+      .then((res) => res.json())
+      .then((data) => setProjects(data))
+      .finally(() => setLoading(false));
   }, []);
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : projects.length > 0 ? (
     <Container>
-      {projects.map(project => (
+      {projects.map((project) => (
         <ProjectItem data={project} benford={benford} />
       ))}
     </Container>
+  ) : (
+    <h1>No projects yet</h1>
   );
 }
