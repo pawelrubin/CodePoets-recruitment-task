@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routes import BenfordRouter
+from app.routes import BenfordRouter
 
 app = FastAPI(openapi_url="/api/openapi.json", docs_url="/api/docs", redoc_url=None)
 

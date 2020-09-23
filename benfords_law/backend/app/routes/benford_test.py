@@ -1,5 +1,6 @@
+from functools import lru_cache
 from io import BytesIO
-from typing import Any, Counter, Dict, List, Optional, Union, cast
+from typing import Any, Counter, Dict, List, Optional, cast
 
 from fastapi.routing import APIRouter
 from fastapi.param_functions import File
@@ -52,9 +53,14 @@ async def benford_test_file(file: UploadFile = File(...)) -> BenfordStats:
     )
 
 
-@router.get("/assert_stats/")
-async def benford_test_data() -> Dict[str, float]:
+@lru_cache
+def get_benford_assertion() -> Dict[str, float]:
     df = read_table("/app/data/census_2009b")
     # cast is okay since we know the structure of data
     parsed = cast(List[str], type_guard_and_parse(df["7_2009"].to_list()))
     return significant_digits_stats(parsed)
+
+
+@router.get("/assert_stats/")
+async def benford_test_data() -> Dict[str, float]:
+    return get_benford_assertion()
