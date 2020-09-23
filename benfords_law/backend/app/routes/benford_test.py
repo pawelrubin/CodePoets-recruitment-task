@@ -1,6 +1,6 @@
 from functools import lru_cache
 from io import BytesIO
-from typing import Any, Counter, Dict, List, Optional, cast
+from typing import Any, Counter, Dict, List, Optional, cast, get_args
 
 from fastapi.routing import APIRouter
 from fastapi.param_functions import File
@@ -8,8 +8,8 @@ from fastapi.datastructures import UploadFile
 from fastapi.exceptions import HTTPException
 from pandas import read_table
 
-from app.models import BenfordStats
-from app.types import DIGITS
+from app.models import BenfordStatsResponse
+from app.types import Digit
 from app.helpers import merge_dicts
 
 router = APIRouter()
@@ -32,19 +32,19 @@ def type_guard_and_parse(lst: List[Any]) -> Optional[List[str]]:
 def significant_digits_stats(digits: List[str]) -> Dict[str, float]:
     total = len(digits)
     multiset = Counter(digits)
-    initial = {d: 0.0 for d in DIGITS}
+    initial = {d: 0.0 for d in get_args(Digit)}
     result = {k: v / total for k, v in sorted(multiset.items())}
     return merge_dicts(initial, result)
 
 
 @router.post("/test_file/")
-async def benford_test_file(file: UploadFile = File(...)) -> BenfordStats:
+async def benford_test_file(file: UploadFile = File(...)) -> BenfordStatsResponse:
     content = cast(bytes, await file.read())
     try:
         df = read_table(BytesIO(content))
     except Exception as err:
         raise HTTPException(status_code=400, detail=str(err)) from err
-    return BenfordStats(
+    return BenfordStatsResponse(
         stats={
             column: significant_digits_stats(lst)
             for column in df.columns
