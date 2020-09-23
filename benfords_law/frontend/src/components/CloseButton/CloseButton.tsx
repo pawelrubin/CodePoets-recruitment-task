@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+import React from "react";
 import styled, { css } from "styled-components";
 
 const Button = styled.button(
@@ -13,7 +13,7 @@ const Button = styled.button(
     padding: 0;
 
     &:hover {
-      color: ${theme.color.secondaryLight}
+      color: ${theme.color.secondaryLight};
     }
   `
 );

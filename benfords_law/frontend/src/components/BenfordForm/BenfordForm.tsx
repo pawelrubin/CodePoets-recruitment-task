@@ -1,18 +1,15 @@
 import React, {
   ChangeEvent,
   Dispatch,
-  PropsWithChildren,
   SetStateAction,
   SyntheticEvent,
   useState,
 } from "react";
-import { BenfordStats, SignificantDigitsStats } from "../../types";
+import { BenfordStats } from "../../types";
 
-type BenfordFormProps = PropsWithChildren<{
-  setStats: Dispatch<
-    SetStateAction<BenfordStats | null>
-  >;
-}>;
+type BenfordFormProps = {
+  setStats: Dispatch<SetStateAction<BenfordStats | undefined>>;
+};
 
 export function BenfordForm({ setStats }: BenfordFormProps) {
   const [file, setFile] = useState<File>();

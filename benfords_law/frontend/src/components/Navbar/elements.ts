@@ -21,7 +21,7 @@ export const StyledMenu = styled.nav`
       margin: 0;
       padding: 0;
       overflow: hidden;
-      &>li {
+      & > li {
         display: inline-block;
       }
       text-align: center;

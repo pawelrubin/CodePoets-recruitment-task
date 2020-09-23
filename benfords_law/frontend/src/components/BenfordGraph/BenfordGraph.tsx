@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { useState } from "react";
 
 import {
   CartesianGrid,
@@ -14,7 +14,7 @@ import { StylesConfig } from "react-select";
 import { SignificantDigitsStats, BenfordStats, Digit } from "types";
 import { BenfordGraphData, IOption } from "./types";
 import { Container, StyledComposedChart, StyledSelect } from "./elements";
-import { CloseButton} from 'components/CloseButton'
+import { CloseButton } from "components/CloseButton";
 import { theme } from "theme";
 
 const getOptions = (stats: BenfordStats): IOption[] =>
@@ -34,11 +34,11 @@ const customStyles: StylesConfig = {
   }),
 };
 
-type BenfordGraphProps = PropsWithChildren<{
+type BenfordGraphProps = {
   stats: BenfordStats;
   benford: SignificantDigitsStats;
   reset: () => void;
-}>;
+};
 
 export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
   const options = getOptions(stats);
@@ -46,14 +46,14 @@ export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
 
   const parseData = (stats: SignificantDigitsStats): BenfordGraphData =>
     Object.entries(stats).map(([digit, distribution]) => ({
-      digit: (digit as Digit),
+      digit: digit as Digit,
       distribution,
-      benford: benford[(digit as Digit)],
+      benford: benford[digit as Digit],
     }));
 
   return (
     <Container>
-      <CloseButton onClick={reset}/>
+      <CloseButton onClick={reset} />
       <StyledSelect
         defaultValue={options[0]}
         options={options}

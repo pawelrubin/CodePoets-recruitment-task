@@ -3,7 +3,7 @@ export const theme = {
     primaryDark: "#0D0C1D",
     secondaryDark: "#343078",
     primaryLight: "#EFFFFA",
-    secondaryLight: "#cae0d9"
+    secondaryLight: "#cae0d9",
   },
   spacing: {
     big: "20px",
