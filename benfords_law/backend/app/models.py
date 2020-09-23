@@ -1,11 +1,10 @@
 from pydantic import BaseModel, ValidationError, validator
 
-from app.types import BenfordStats, BenfordObey
+from app.types import BenfordStats
 
 
 class BenfordStatsResponse(BaseModel):
     stats: BenfordStats
-    obey: BenfordObey
 
     @validator("stats")
     def at_least_one_valid_column(cls, v: BenfordStats) -> BenfordStats:

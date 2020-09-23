@@ -15,7 +15,11 @@ export type SignificantDigitsStats = {
 };
 
 type Column = string;
-export type BenfordStats = Record<Column, SignificantDigitsStats>;
+export type ColumnStats = {
+  obey: boolean;
+  values: SignificantDigitsStats;
+};
+export type BenfordStats = Record<Column, ColumnStats>;
 
 export type Project = {
   stats: BenfordStats;

@@ -11,14 +11,22 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { StylesConfig } from "react-select";
-import { SignificantDigitsStats, BenfordStats, Digit } from "types";
+import {
+  ColumnStats,
+  SignificantDigitsStats,
+  BenfordStats,
+  Digit,
+} from "types";
 import { BenfordGraphData, IOption } from "./types";
 import { Container, StyledComposedChart, StyledSelect } from "./elements";
 import { CloseButton } from "components/CloseButton";
 import { theme } from "theme";
 
 const getOptions = (stats: BenfordStats): IOption[] =>
-  Object.keys(stats).map((column) => ({ value: column, label: column }));
+  Object.entries(stats).map(([column, { obey }]) => ({
+    value: `${column}`,
+    label: `${column} - ${obey ? "obeys" : "doesn't obey"} the Benford's Law`,
+  }));
 
 const customStyles: StylesConfig = {
   control: (styles) => ({
@@ -44,8 +52,8 @@ export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
   const options = getOptions(stats);
   const [column, setColumn] = useState<string>(options[0]?.value);
 
-  const parseData = (stats: SignificantDigitsStats): BenfordGraphData =>
-    Object.entries(stats).map(([digit, distribution]) => ({
+  const parseData = (stats: ColumnStats): BenfordGraphData =>
+    Object.entries(stats.values).map(([digit, distribution]) => ({
       digit: digit as Digit,
       distribution,
       benford: benford[digit as Digit],
@@ -53,7 +61,7 @@ export function BenfordGraph({ benford, stats, reset }: BenfordGraphProps) {
 
   return (
     <Container>
-      {reset && <CloseButton onClick={reset} />} 
+      {reset && <CloseButton onClick={reset} />}
       <StyledSelect
         defaultValue={options[0]}
         options={options}
