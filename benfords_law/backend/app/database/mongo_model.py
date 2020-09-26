@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Callable, Dict, Iterator, Optional
+from typing import Any, Callable, Dict, Iterator, Optional, Type, TypeVar
 
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from pydantic import BaseModel, BaseConfig
+
+_T = TypeVar("_T")
 
 
 class OID(str):
@@ -31,10 +33,8 @@ class MongoModel(BaseModel):
         }
 
     @classmethod
-    def from_mongo(cls, data: Optional[Dict["str", Any]]) -> Optional[MongoModel]:
-        """We must convert _id into "id". """
-        if data is None:
-            return data
+    def from_mongo(cls: Type[_T], data: Dict["str", Any]) -> _T:
+        """Creates Model instance from a python dictionary."""
         return cls(**dict(data, id=data.pop("_id", None)))
 
     def mongo(self, **kwargs: Any) -> Dict[str, Any]:
